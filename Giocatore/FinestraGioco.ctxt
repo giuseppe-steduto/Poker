@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=FinestraGioco
+comment1.params=
+comment1.target=FinestraGioco()
+comment2.params=e
+comment2.target=void\ windowClosing(java.awt.event.WindowEvent)
+comment3.params=s
+comment3.target=void\ messaggio(java.lang.String)
+comment4.params=mano
+comment4.target=void\ aggiungiCarte(java.util.Vector)
+comment5.params=e
+comment5.target=void\ actionPerformed(java.awt.event.ActionEvent)
+numComments=6

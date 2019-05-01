@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Giocatore
+comment1.params=f
+comment1.target=Giocatore(FinestraGioco)
+comment2.params=
+comment2.target=void\ inizializza()
+comment3.params=s
+comment3.target=void\ cambiaCarte(java.lang.String)
+comment4.params=s
+comment4.target=void\ chiudi(java.lang.String)
+numComments=5
