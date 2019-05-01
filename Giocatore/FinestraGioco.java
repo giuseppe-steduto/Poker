@@ -9,16 +9,30 @@ public class FinestraGioco extends JFrame implements ActionListener
 {
         private int pixelInPiu = 0;
         Giocatore g;
-        JPanel titoloTop = new JPanel();
+        JPanel titoloTop = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                g.setColor(new Color(71, 113, 72));
+                g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor( Color.WHITE );
+		// X Start, Y Start, X End, Y End
+		// X = <---------->
+		g.drawLine (230, 55, 550, 55);
+	}
+        };
+        JPanel titoloPot = new JPanel();
         JPanel carte = new JPanel();
         JPanel bottoni = new JPanel();
+        JPanel titolo = new JPanel();
         GruppoBottoni carteBottoni = new GruppoBottoni();
+        Font font; //Font di default
         public FinestraGioco() {
            //Comandi per finestra
            super("Le tue carte da poker");
            this.setLocation(200, 200);
-           this.setSize(800, 250);
+           this.setSize(800, 500);
            this.setLayout(new BorderLayout());
+           this.getContentPane().setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
            g = new Giocatore(this);
            //Chiudi la sessione di gioco quando chiudi la finestra
            this.addWindowListener(new WindowAdapter(){
@@ -38,17 +52,72 @@ public class FinestraGioco extends JFrame implements ActionListener
                 }
             });
            //setResizable(false);
-
+           
+           //Styling dei componenti
+           try {
+               font = Font.createFont(Font.TRUETYPE_FONT, new File("JosefinSans-Regular.ttf")).deriveFont(Font.TRUETYPE_FONT, 20);
+           } catch (IOException|FontFormatException e) {
+                messaggio("Non è stato possibile caricare il font. Verrà usato uno predefinito.");
+                font = new Font("Century Gothic", Font.PLAIN, 25);
+           }
+           
+           //Comandi per pannello titolo
+           titolo.setLayout(new BorderLayout());
+           titolo.add(titoloTop, BorderLayout.NORTH);
+           titolo.add(titoloPot, BorderLayout.SOUTH);
+           
+           //Comandi per pannello titolo superiore, saldo
+           titoloTop.setLayout(new FlowLayout());
+           titoloTop.setOpaque(true); //Necessario per far vedere il colore
+           titoloTop.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+           //Etichette per i soldi
+           Etichetta saldoLabel = new Etichetta("Saldo", font);
+           titoloTop.add(saldoLabel);
+           Etichetta saldoValueLabel = new Etichetta("25€", font);
+           titoloTop.add(saldoValueLabel);
+           JLabel chipsPoker = new JLabel();
+           chipsPoker.setIcon(new ImageIcon("chipsPoker.png"));
+           titoloTop.add(chipsPoker);
+           Etichetta piattoValueLabel = new Etichetta("320€", font);
+           titoloTop.add(piattoValueLabel);
+           Etichetta piattoLabel = new Etichetta("Piatto", font);
+           titoloTop.add(piattoLabel);
+           
+           //Comandi per pannello titolo inferiore
+           titoloPot.setLayout(new FlowLayout());
+           titoloPot.setOpaque(true); //Necessario per far vedere il colore
+           titoloPot.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+           Etichetta puntataLabel = new Etichetta("Puntata minima", font.deriveFont(15));
+           titoloPot.add(puntataLabel);
+           Etichetta puntataValueLabel = new Etichetta("8€", font);
+           titoloPot.add(puntataValueLabel);
+           
+           this.add(titolo, BorderLayout.NORTH);
+           
            //Comandi per pannello carte
-           this.add(titoloTop, BorderLayout.NORTH);
            this.add(carte, BorderLayout.CENTER);
            carte.setLayout(new FlowLayout());
+           carte.setOpaque(true);
+           carte.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
 
            //Comandi per pannello bottoni
            bottoni.setLayout(new FlowLayout());
-           JButton cambia = new JButton("Cambia carte");
+           bottoni.setOpaque(true);
+           bottoni.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+           
+           //Bottone per fare parola ↓
+           Bottone parola = new Bottone("   Parola   ", "Parola", font);
+           parola.addActionListener(this);
+           bottoni.add(parola);
+           //Bottone per cambiare le carte ↓
+           Bottone cambia = new Bottone("Cambia carte", "Cambia", font);
            cambia.addActionListener(this);
            bottoni.add(cambia);
+           //Bottone per puntare ↓
+           Bottone punta = new Bottone("   Punta    ", "Punta", font);
+           punta.addActionListener(this);
+           bottoni.add(punta);
+           
            this.add(bottoni, BorderLayout.SOUTH);
         }
 
@@ -71,10 +140,20 @@ public class FinestraGioco extends JFrame implements ActionListener
             }
         }
 
-        //Richiamato per il cambio delle carte
         @Override
         public void actionPerformed(ActionEvent e) {
-            pixelInPiu++;
+            if(e.getActionCommand().equals("Cambia")) {
+                cambiaCarte();
+            } else if (e.getActionCommand().equals("Cambia")) {
+            
+            } else {
+            
+            }
+        }
+        
+        
+        //Richiamato per il cambio delle carte
+        public void cambiaCarte() {
             boolean possoEliminare = true;
             //Cosa succede se premo il bottone "Cambia carte" ↓
             //Controllo di aver selezionato da 1 a 4 carte

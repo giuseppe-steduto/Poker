@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=Etichetta
+comment0.text=\r\n\ Questa\ classe\ serve\ solo\ per\ lo\ styling\ dei\ bottoni.\r\n
+comment1.params=label\ f
+comment1.target=Etichetta(java.lang.String,\ java.awt.Font)
+numComments=2

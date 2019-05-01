@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.target=Bottone
+comment0.text=\r\n\ Questa\ classe\ serve\ solo\ per\ lo\ styling\ dei\ bottoni.\r\n
+comment1.params=label\ actionComm\ f
+comment1.target=Bottone(java.lang.String,\ java.lang.String,\ java.awt.Font)
+numComments=2
