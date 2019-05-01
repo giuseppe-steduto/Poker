@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Mazzo
+comment1.params=
+comment1.target=Mazzo()
+comment2.params=
+comment2.target=Carta\ estraiCarta()
+comment3.params=c
+comment3.target=void\ add(Carta)
+numComments=4
