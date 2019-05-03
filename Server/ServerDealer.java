@@ -1,9 +1,7 @@
-package Server;
-
 import java.net.*;
 import java.util.*;
 import java.io.*;
-
+//Scala Reale – Scala Colore – Poker – Full – Colore – Scala – Tris – Doppia Coppia – Coppia – Carta Alta 
 /*
 Classe ServerDealer per il progetto "poker".
 È il server che si occupa di gestire il mazzo e la partita.
@@ -17,10 +15,10 @@ public class ServerDealer {
   private static Mazzo mazzo = new Mazzo();
   private static int giocatori = 0;
   private static boolean parolaDone = false;  //variabile booleana che segnala se è stata fatta parola da almeno un giocatore in questo turno o meno
-  private static boolean cehapDone = false;  //variabile booleana che segnala se è stata fatta l'azione di cheap da almeno un giocatore in questo turno o meno
+  private static boolean cheapDone = false;  //variabile booleana che segnala se è stata fatta l'azione di cheap da almeno un giocatore in questo turno o meno
   private static Database log = new Database(); //Database in cui si memorizzano gli ID e i dati di ogni sessione
-  private static int piatto; //Variabile che rappresenta il valore del piatto della sessione di gioco del poker
-  private static int puntataMinima = 0; //Variabile che rappresenta il valore della puntata minima che si deve effettuare in ogni momento della partita
+  private static int piatto = 50; //Variabile che rappresenta il valore del piatto della sessione di gioco del poker
+  private static int puntataMinima = 50; //Variabile che rappresenta il valore della puntata minima che si deve effettuare in ogni momento della partita
   private static boolean isPartitaFinita = false; //Variabile booleana che determina se la partita è o non è terminata (FALSE se è ancora in corso, TRUE se è terminata)
   private static String idPrimoGiocatore = ""; //Variabile contenente l'ID del giocatore che è "a capo" di ogni turno
 
@@ -39,7 +37,7 @@ public class ServerDealer {
                     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 
                     // Lettura richiesta dal client
-                    String str=in.readLine();
+                    String str = in.readLine();
                     String risposta = elabora(str);
 
                     //trasmissione risposta del server
@@ -111,7 +109,7 @@ public class ServerDealer {
   */
   private static String operazionePuntata(String r) {
         String tmp = "";
-        int i = 0; //Variabile che, alla fine, determinerà la posizione della prima cifra dell'ID nella stringa r
+        int i = 1; //Variabile che, alla fine, determinerà la posizione della prima cifra dell'ID nella stringa r
         //Il ciclo do-while che va a mettere nella variabile tmp il valore della puntata che il client vuole effettuare
         do{
             tmp += r.charAt(i);
@@ -119,19 +117,23 @@ public class ServerDealer {
         }
         while(r.charAt(i) != 'S');
         int puntata = Integer.parseInt(tmp);
-        String id = r.substring(i, 6);
+        String id = r.substring(++i);
         if(puntataMinima == 0)
             idPrimoGiocatore = id;
         if(id.equals(idPrimoGiocatore))
             puntataMinima = puntata;
         if(puntata == puntataMinima) {
             piatto += puntata;
+            avantiTurno(id);
+            parolaDone = false;
             return "OK";
         }
         else if(puntata > puntataMinima) {
             idPrimoGiocatore = id;
             puntataMinima = puntata;
             piatto += puntata;
+            avantiTurno(id);
+            parolaDone = false;
             return "OK";
         }
         return "E";
@@ -148,9 +150,14 @@ public class ServerDealer {
   */
   private static String richiestaParola(String r) {
       String s = "";
-      if((puntataMinima == piatto) && !cheapDone) {  //controllo del valore del piatto col valore della puntataMinima poiché se essi coincidono
-          parolaDone = true;                         //significa che nessuno ha puntato o fatto cheap quindi si può far parola
-          s = "WS";                  
+      String id = r.substring(1);
+      if(idPrimoGiocatore.equals(""))
+        idPrimoGiocatore = id;
+      if(id.equals(idPrimoGiocatore)) 
+          parolaDone = true;
+      if(parolaDone) {  //controllo del valore del piatto col valore della puntataMinima poiché se essi coincidono
+          s = "WS";
+          avantiTurno(id);
           return s;
       }
       else {
@@ -181,7 +188,7 @@ public class ServerDealer {
         return s;
     }
 
-  } 
+  }
 
   /*
    * Funzione che restituisce la risposta alla richiesta del client "è il mio turno?".
@@ -215,7 +222,7 @@ public class ServerDealer {
      Stringa "ok", ma praticamente non serve a nulla
    */
   private static String chiudiConnessione(String r) {
-      Record record = new Record(r.substring(1, 6));
+      Record record = new Record(r.substring(1, 7));
       if(!log.contains(record)) {
           return "E";
       }
@@ -228,6 +235,7 @@ public class ServerDealer {
           Carta c = new Carta(car.charAt(3 * i + 1), car.charAt(3 * i + 2));
           mazzo.add(c);
       }
+      avantiTurno(record.getId());
       log.remove(record);
       giocatori--;
       return "ok";
@@ -245,7 +253,7 @@ public class ServerDealer {
   private static String cambiaCarte(String r) {
       String s = "";
       //Se non è presente nessun record con l'id inviato, restituisco errore
-      Record record = new Record(r.substring(r.length() - 5));
+      Record record = new Record(r.substring(r.length() - 6));
       if(!log.contains(record)) {
           return "E";
       }
@@ -268,6 +276,7 @@ public class ServerDealer {
       record.cambiaCarte(r.charAt(1) - 48);
       record.setCarte(car);
       log.aggiorna(record);
+      avantiTurno(record.getId());
       return s;
   }
 
@@ -291,6 +300,9 @@ public class ServerDealer {
       for(int i = 0; i < 5; i++) {
         Carta c = mazzo.estraiCarta();
         s += "C" + c.getValore() + c.getSeme();
+      }
+      if(log.size() == 1) {
+          record.setTurno(true);
       }
       record.setCarte(s);
       log.aggiorna(record);
@@ -335,7 +347,7 @@ public class ServerDealer {
     //Genera un id di 5 interi casuali
     String id = "";
     Random rand = new Random();
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 6; i++) {
         id += rand.nextInt(10);
     }
     s = "S" + id;

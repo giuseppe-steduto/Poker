@@ -1,30 +1,36 @@
 #BlueJ class context
 comment0.target=ServerDealer
-comment0.text=\r\nClasse\ ServerDealer\ per\ il\ progetto\ "poker".\r\n\u00C8\ il\ server\ che\ si\ occupa\ di\ gestire\ il\ mazzo\ e\ la\ partita.\r\nGestisce\ massimo\ 8\ giocatori,\ assegnando\ e\ cambiando\ carte\ da\ un\r\nmazzo\ di\ 52\ carte\ da\ poker\ (Classe\ "mazzo").\r\nIl\ protocollo\ di\ comunicazione\ usato\ \u00E8\ specificato\ nella\ cartella\r\ndel\ progetto.\r\n
+comment0.text=\nClasse\ ServerDealer\ per\ il\ progetto\ "poker".\n\u00C8\ il\ server\ che\ si\ occupa\ di\ gestire\ il\ mazzo\ e\ la\ partita.\nGestisce\ massimo\ 8\ giocatori,\ assegnando\ e\ cambiando\ carte\ da\ un\nmazzo\ di\ 52\ carte\ da\ poker\ (Classe\ "mazzo").\nIl\ protocollo\ di\ comunicazione\ usato\ \u00E8\ specificato\ nella\ cartella\ndel\ progetto.\n
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
+comment10.params=id
+comment10.target=void\ avantiTurno(java.lang.String)
+comment10.text=\n\ \ \ \ \ \ Funzione\ che\ scorre\ il\ turno.\n\ \ \ \ \ \ Parametri\:\n\ \ \ \ \ \ String\ id\ -\ L'id\ di\ chi\ ha\ appena\ finito\ (CON\ SUCCESSO)\ la\ sua\ mossa\n
+comment11.params=r
+comment11.target=java.lang.String\ apriConnessione(java.lang.String)
+comment11.text=\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ (le\ prime\ 5)\ al\ client\ che\ le\ richiede\n\ \ \ \ Parametri\:\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ O)\n\n\ \ \ \ Valore\ restituito\:\n\ \ \ \ -\ Stringa\ del\ tipo\ S[ID].\ Significa\ "connessione\ creata,\ con\ id\ \=\ [ID]"\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\n\ \ \ \ -\ Stringa\ "F",\ la\ partita\ \u00E8\ piena\n
 comment2.params=r
 comment2.target=java.lang.String\ elabora(java.lang.String)
-comment2.text=\r\n\ Funzione\ che\ restituisce\ la\ risposta\ a\ una\ richiesta\ qualunque\ del\ client.\r\n\ Parametri\:\r\n\ String\ r\ -\ La\ richiesta\ del\ client\ (vedi\ dettagli\ da\ protocollo)\r\n\r\n\ Valore\ restituito\:\r\n\ Stringa\ rappresentante\ la\ risposta\ del\ server\ (vedi\ dettagli\ da\ protocollo)\r\n
+comment2.text=\n\ Funzione\ che\ restituisce\ la\ risposta\ a\ una\ richiesta\ qualunque\ del\ client.\n\ Parametri\:\n\ String\ r\ -\ La\ richiesta\ del\ client\ (vedi\ dettagli\ da\ protocollo)\n\n\ Valore\ restituito\:\n\ Stringa\ rappresentante\ la\ risposta\ del\ server\ (vedi\ dettagli\ da\ protocollo)\n
 comment3.params=r
 comment3.target=java.lang.String\ operazionePuntata(java.lang.String)
-comment3.text=\r\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ "voglio\ puntare".\r\n\ Parametri\:\r\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ P[V]S[ID])\r\n\r\n\ Valore\ restituito\:\r\n\ Stringa\ "OK"\ se\ l'operazione\ di\ puntata\ \u00E8\ adnato\ a\ buon\ fine,\ Stringa\ "E"\ se\ c'\u00E8\ stato\ un\ errore\ generico\r\n\r\n\ Note\:\ questa\ funzione\ prevede\ anche\ l'aggiornamento\ delle\ seguenti\ vriabili\:\r\n\ \ \ \ \ \ \ -idPrimoGiocatore\ -->\ asssume\ il\ valore\ dell'ID\ in\ questione\ se\ la\ sua\ puntata\ \u00E8\ maggiore\ a\ quella\ della\ puntataMinima\ o\ se\ la\ puntataMinima\ attual\u00F2e\ \u00E8\ pari\ a\ 0\r\n\ \ \ \ \ \ \ -puntatMinima\ -->\ assume\ il\ valore\ della\ puntata\ in\ questione\ se\ quest'ultima\ \u00E8\ maggiore\ alla\ puntatMinima\ stessa\ o\ se\ l'ID\ del\ giocatore\ in\ questione\ \u00E8\ uguale\ all'idPrimoGiocatore\r\n
+comment3.text=\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ "voglio\ puntare".\n\ Parametri\:\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ P[V]S[ID])\n\n\ Valore\ restituito\:\n\ Stringa\ "OK"\ se\ l'operazione\ di\ puntata\ \u00E8\ adnato\ a\ buon\ fine,\ Stringa\ "E"\ se\ c'\u00E8\ stato\ un\ errore\ generico\n\n\ Note\:\ questa\ funzione\ prevede\ anche\ l'aggiornamento\ delle\ seguenti\ vriabili\:\n\ \ \ \ \ \ \ -idPrimoGiocatore\ -->\ asssume\ il\ valore\ dell'ID\ in\ questione\ se\ la\ sua\ puntata\ \u00E8\ maggiore\ a\ quella\ della\ puntataMinima\ o\ se\ la\ puntataMinima\ attual\u00F2e\ \u00E8\ pari\ a\ 0\n\ \ \ \ \ \ \ -puntatMinima\ -->\ assume\ il\ valore\ della\ puntata\ in\ questione\ se\ quest'ultima\ \u00E8\ maggiore\ alla\ puntatMinima\ stessa\ o\ se\ l'ID\ del\ giocatore\ in\ questione\ \u00E8\ uguale\ all'idPrimoGiocatore\n
 comment4.params=r
-comment4.target=java.lang.String\ isMioTurno(java.lang.String)
-comment4.text=\r\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ "\u00E8\ il\ mio\ turno?".\r\n\ Parametri\:\r\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ T[ID])\r\n\r\n\ Valore\ restituito\:\r\n\ Stringa\ del\ tipo\ T[R],\ dove\ R\ \=\ S\ se\ \u00E8\ il\ turno\ del\ giocatore\ con\ id\ \=\ [ID],\ altrimenti\ R\ \=\ N\r\n
+comment4.target=java.lang.String\ richiestaParola(java.lang.String)
+comment4.text=\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ di\ fare\ "parola".\n\ Parametri\:\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ W)\n\n\ Valore\ restituito\:\n\ Stringa\ del\ tipo\ W[R],\ dove\ R\ \=\ S\ se\ \u00E8\ possibile\ fare\ parola\n\ Stringa\ del\ tipo\ W[R],\ dove\ R\ \=\ N\ se\ NON\ \u00E8\ possibile\ fare\ parola\n
 comment5.params=r
-comment5.target=java.lang.String\ chiudiConnessione(java.lang.String)
-comment5.text=\r\n\ Funzione\ che\ termina\ la\ connessione\ con\ il\ client\ eliminando\ la\ sua\ sessione.\r\n\ \ \ \ \ Parametri\:\r\n\ \ \ \ \ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ $[ID])\r\n\r\n\ \ \ \ \ Valore\ restituito\:\r\n\ \ \ \ \ Stringa\ "ok",\ ma\ praticamente\ non\ serve\ a\ nulla\r\n
+comment5.target=java.lang.String\ richiestaCheap(java.lang.String)
+comment5.text=\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ di\ fare\ "cheap".\n\ Parametri\:\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ A)\n\n\ Valore\ restituito\:\n\ Stringa\ del\ tipo\ A[R],\ dove\ R\ \=\ S\ se\ \u00E8\ possibile\ fare\ cheap\n\ Stringa\ del\ tipo\ A[R],\ dove\ R\ \=\ N\ se\ NON\ \u00E8\ possibile\ fare\ cheap\n
 comment6.params=r
-comment6.target=java.lang.String\ cambiaCarte(java.lang.String)
-comment6.text=\r\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ nuove\ al\ client\ che\ le\ richiede,\ reinserendo\ le\ carte\ cambiate\ nel\ Mazzo\r\n\ \ \ \ Parametri\:\r\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ H[N_CARTE]C[VALORE][SEME]...S[ID])\r\n\r\n\ \ \ \ Valore\ restituito\:\r\n\ \ \ \ -\ Stringa\ del\ tipo\ C[VALORE][SEME]\ ripetuto\ N_CARTE\ volte.\ Sarebbero\ le\ nuove\ carte\r\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\ (es.\ se\ non\ esiste\ un\ record\ con\ quell'id)\r\n
+comment6.target=java.lang.String\ isMioTurno(java.lang.String)
+comment6.text=\n\ Funzione\ che\ restituisce\ la\ risposta\ alla\ richiesta\ del\ client\ "\u00E8\ il\ mio\ turno?".\n\ Parametri\:\n\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ T[ID])\n\n\ Valore\ restituito\:\n\ Stringa\ del\ tipo\ T[R],\ dove\ R\ \=\ S\ se\ \u00E8\ il\ turno\ del\ giocatore\ con\ id\ \=\ [ID],\ altrimenti\ R\ \=\ N\n
 comment7.params=r
-comment7.target=java.lang.String\ distribuisciCarte(java.lang.String)
-comment7.text=\r\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ (le\ prime\ 5)\ al\ client\ che\ le\ richiede\r\n\ \ \ \ Parametri\:\r\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ R[ID])\r\n\r\n\ \ \ \ Valore\ restituito\:\r\n\ \ \ \ -\ Stringa\ del\ tipo\ C[VALORE][SEME]\ ripetuto\ 5\ volte.\ Sarebbero\ le\ nuove\ carte\r\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\ (es.\ se\ non\ esiste\ un\ record\ con\ quell'id)\r\n
-comment8.params=id
-comment8.target=void\ avantiTurno(java.lang.String)
-comment8.text=\r\n\ \ \ \ \ \ Funzione\ che\ scorre\ il\ turno.\r\n\ \ \ \ \ \ Parametri\:\r\n\ \ \ \ \ \ String\ id\ -\ L'id\ di\ chi\ ha\ appena\ finito\ (CON\ SUCCESSO)\ la\ sua\ mossa\r\n
+comment7.target=java.lang.String\ chiudiConnessione(java.lang.String)
+comment7.text=\n\ Funzione\ che\ termina\ la\ connessione\ con\ il\ client\ eliminando\ la\ sua\ sessione.\n\ \ \ \ \ Parametri\:\n\ \ \ \ \ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ $[ID])\n\n\ \ \ \ \ Valore\ restituito\:\n\ \ \ \ \ Stringa\ "ok",\ ma\ praticamente\ non\ serve\ a\ nulla\n
+comment8.params=r
+comment8.target=java.lang.String\ cambiaCarte(java.lang.String)
+comment8.text=\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ nuove\ al\ client\ che\ le\ richiede,\ reinserendo\ le\ carte\ cambiate\ nel\ Mazzo\n\ \ \ \ Parametri\:\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ H[N_CARTE]C[VALORE][SEME]...S[ID])\n\n\ \ \ \ Valore\ restituito\:\n\ \ \ \ -\ Stringa\ del\ tipo\ C[VALORE][SEME]\ ripetuto\ N_CARTE\ volte.\ Sarebbero\ le\ nuove\ carte\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\ (es.\ se\ non\ esiste\ un\ record\ con\ quell'id)\n
 comment9.params=r
-comment9.target=java.lang.String\ apriConnessione(java.lang.String)
-comment9.text=\r\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ (le\ prime\ 5)\ al\ client\ che\ le\ richiede\r\n\ \ \ \ Parametri\:\r\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ O)\r\n\r\n\ \ \ \ Valore\ restituito\:\r\n\ \ \ \ -\ Stringa\ del\ tipo\ S[ID].\ Significa\ "connessione\ creata,\ con\ id\ \=\ [ID]"\r\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\r\n\ \ \ \ -\ Stringa\ "F",\ la\ partita\ \u00E8\ piena\r\n
-numComments=10
+comment9.target=java.lang.String\ distribuisciCarte(java.lang.String)
+comment9.text=\n\ \ \ \ Funzione\ che\ d\u00E0\ carte\ (le\ prime\ 5)\ al\ client\ che\ le\ richiede\n\ \ \ \ Parametri\:\n\ \ \ \ +\ String\ r\ -\ La\ richiesta\ del\ client\ (di\ tipo\ R[ID])\n\n\ \ \ \ Valore\ restituito\:\n\ \ \ \ -\ Stringa\ del\ tipo\ C[VALORE][SEME]\ ripetuto\ 5\ volte.\ Sarebbero\ le\ nuove\ carte\n\ \ \ \ -\ Stringa\ "E",\ errore\ generico\ (es.\ se\ non\ esiste\ un\ record\ con\ quell'id)\n
+numComments=12
