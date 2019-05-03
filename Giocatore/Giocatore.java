@@ -2,7 +2,7 @@ import java.net.*;
 import java.util.Vector;
 public class Giocatore
 {
-    private ConnessioneAPartita conn = new ConnessioneAPartita("localhost", 2000);
+    private ConnessioneAPartita conn = new ConnessioneAPartita("192.168.0.174", 2000);
     private String id = "";
     private String richiesta = "C";
     private String tmp = "";
@@ -48,6 +48,13 @@ public class Giocatore
         }
     }
 
+    public boolean isMioTurno() throws Exception {
+        String risp = conn.risposta("T" + id);
+        if(risp.charAt(1) == 'S')
+            return true;
+        return false;
+    }
+
     public void cambiaCarte(String s) throws Exception {
         int n = s.length() / 3; //Numero di carte da sostituire
         String risp = conn.risposta("H" + n + s + "S" + id);
@@ -64,8 +71,22 @@ public class Giocatore
         }
         f.aggiungiCarte(carte);
     }
-    
+
     public void chiudi(String s) throws Exception {
         String risp = conn.risposta("$" + id + s);
     }
+
+    public String richiediPuntata() throws Exception {
+        String risp = conn.risposta("?P");
+        return risp.substring(1, risp.indexOf("P"));
+    }
+
+    public String punta(int valorePuntata) throws Exception {return conn.risposta("P" + valorePuntata + "S" + id);}
+
+    public String richiediPiatto() throws Exception {
+        String risp = conn.risposta("?P");
+        return risp.substring(risp.indexOf("P") + 1);
+    }
+    
+    public String parola() throws Exception {return conn.risposta("W" + id);}
 }
