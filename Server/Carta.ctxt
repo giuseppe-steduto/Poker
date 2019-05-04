@@ -6,4 +6,6 @@ comment2.params=
 comment2.target=java.lang.Character\ getValore()
 comment3.params=
 comment3.target=java.lang.Character\ getSeme()
-numComments=4
+comment4.params=
+comment4.target=int\ getValoreCarta()
+numComments=5

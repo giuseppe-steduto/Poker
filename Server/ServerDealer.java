@@ -378,12 +378,12 @@ public class ServerDealer {
                - 7 -> Poker (4 carte dello stesso valore)
                - 8 -> Scala reale (5 carte consecutive dello stesso seme)
   */
-  private static String ottieniPunteggioCarte(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String ottieniPunteggioCarte(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String punteggio = "";
       if(!isScalaReale(c1, c2, c3, c4, c5).equals(""))
           punteggio = isScalaReale(c1, c2, c3, c4, c5);
       else if(!isPoker(c1, c2, c3, c4, c5).equals(""))
-          punteggio + isPoker(c1, c2, c3, c4, c5);
+          punteggio = isPoker(c1, c2, c3, c4, c5);
       else if(!isColore(c1, c2, c3, c4, c5).equals(""))
           punteggio = isColore(c1, c2, c3, c4, c5);
       else if(!isFull(c1, c2, c3, c4, c5).equals(""))
@@ -401,7 +401,77 @@ public class ServerDealer {
       return punteggio;
   }
 
-  private static String isScalaReale(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      Vector<Carta> mano = new Vector<Carta>();
+      mano.add(c1);
+      mano.add(c2);
+      mano.add(c3);
+      mano.add(c4);
+      mano.add(c5);
+      for(int i = 0; i < 4; i++) {
+          for(int j = i + 1; j < 5; j++) {
+              if(mano.get(i).getValoreCarta() == mano.get(j).getValoreCarta()) {
+                  String str = "1" + mano.get(i).getValoreCarta();
+                  char seme = semePiuAlto(mano.get(i).getSeme(), mano.get(j).getSeme());
+                  return str + seme;
+              }
+          }
+      }
+      return "";
+  }
+
+  public static char semePiuAlto(char s1, char s2) {
+      if(s1 == 'C')
+        return s1;
+      else if(s1 == 'P')
+        return s2;
+      else if(s1 == 'F') {
+          if(s2 == 'C' || s2 == 'Q')
+            return s2;
+          else
+            return s1;
+      }
+      else {
+          if(s2 == 'C')
+            return s2;
+          else
+            return s1;
+      }
+  }
+
+  public static String isDoppiaCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      int nCoppie = 0;
+      Vector<Carta> coppia1 = new Vector<Carta>(); //Prima coppia
+      Vector<Carta> coppia2 = new Vector<Carta>(); //Seconda coppia
+      Vector<Carta> mano = new Vector<Carta>();
+      mano.add(c1);
+      mano.add(c2);
+      mano.add(c3);
+      mano.add(c4);
+      mano.add(c5);
+      for(int i = 0; i < 4; i++) {
+          for(int j = i + 1; j < 5; j++) {
+              if(mano.get(i).getValoreCarta() == mano.get(j).getValoreCarta()) {
+                  if(nCoppie == 0) {
+                      coppia1.add(mano.get(i));
+                      coppia1.add(mano.get(j));
+                  } else {
+                      coppia2.add(mano.get(i));
+                      coppia2.add(mano.get(j));
+                  }
+                  nCoppie++;
+              }
+          }
+      }
+
+      if(nCoppie < 2) {return "";}
+      if(coppia1.get(0).getValoreCarta() > coppia2.get(0).getValoreCarta()) {
+          return "2" + coppia1.get(0).getValoreCarta() + semePiuAlto(coppia1.get(0).getSeme(), coppia1.get(1).getSeme());
+      }
+      return "2" + coppia2.get(0).getValoreCarta() + semePiuAlto(coppia2.get(0).getSeme(), coppia2.get(1).getSeme());
+  }
+
+  public static String isScalaReale(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       int v1 = getValoreCarta(c1);
       int v2 = getValoreCarta(c2);
@@ -416,13 +486,13 @@ public class ServerDealer {
       char s4 = c4.getSeme();
       char s5 = c5.getSeme();
       if(s1 == s2 && s1 == s3 && s1 == s4 && s1 == s5) {
-          if(arrV[0] = arrV[1] - 1 && arrV[1] = arrV[2] - 1 && arrV[2] = arrV[3] - 1 && arrV[4] = arrV[4] - 1)
-              str += "8" + (char)arrV[4] + "" + s1;
+          if(arrV[0] == arrV[1] - 1 && arrV[1] == arrV[2] - 1 && arrV[2] == arrV[3] - 1 && arrV[4] == arrV[4] - 1)
+              str += "8" + arrV[4] + "" + s1;
       }
       return str;
   }
 
-  private static String isPoker(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isPoker(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       int v1 = getValoreCarta(c1);
       int v2 = getValoreCarta(c2);
@@ -430,13 +500,13 @@ public class ServerDealer {
       int v4 = getValoreCarta(c4);
       int v5 = getValoreCarta(c5);
       if((v1 == v2 && v1 == v3 && v1 == v4) || (v1 == v2 && v1 == v3 && v1 == v5) || (v1 == v2 && v1 == v4 && v1 == v5) || (v1 == v3 && v1 == v4 && v1 == v5))
-          str += "7" + (char)v1 + "" + c1.getSeme();
+          str += "7" + v1 + "" + c1.getSeme();
       else if(v2 == v3 && v2 == v4 && v2 == v5)
-          str += "7" + (char)v2 + "" + c2.getSeme();
+          str += "7" + v2 + "" + c2.getSeme();
       return str;
   }
 
-  private static String isColore(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isColore(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       char s1 = c1.getSeme();
       char s2 = c2.getSeme();
@@ -451,11 +521,11 @@ public class ServerDealer {
       int[] arrV = {v1, v2, v3, v4, v5};
       Arrays.sort(arrV);
       if(s1 == s2 && s1 == s3 && s1 == s4 && s1 == s5)
-          str = "6" + (char)arrV[4] + "" + s1;
+          str = "6" + arrV[4] + "" + s1;
       return str;
   }
 
-  private static String isFull(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isFull(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       int v1 = getValoreCarta(c1);
       int v2 = getValoreCarta(c2);
@@ -466,13 +536,13 @@ public class ServerDealer {
       Arrays.sort(arrV);
       //Per questo tipo di punteggio non è necessario inserire anche P3 nella stringa di return
       if(arrV[0] == arrV[1] && arrV[2] == arrV[3] && arrV[2] == arrV[4])
-          str = "5" + arrV[2];
+          str = "5" + arrV[2] + " ";
       else if(arrV[0] == arrV[1] && arrV[0] == arrV[2] && arrV[3] == arrV[4])
-          str = "5" + (char)arrV[0];
+          str = "5" + arrV[0] + " ";
       return str;
   }
 
-  private static isScala(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isScala(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       char s1 = c1.getSeme();
       char s2 = c2.getSeme();
@@ -486,7 +556,7 @@ public class ServerDealer {
       int v5 = getValoreCarta(c5);
       int[] arrV = {v1, v2, v3, v4, v5};
       Arrays.sort(arrV);
-      char tmp = '';
+      char tmp = ' ';
       if(arrV[4] == v1)
           tmp = s1;
       else if(arrV[4] == v2)
@@ -497,13 +567,13 @@ public class ServerDealer {
           tmp = s4;
       else if(arrV[4] == v5)
           tmp = s5;
-      if(arrV[0] = arrV[1] - 1 && arrV[1] = arrV[2] - 1 && arrV[2] = arrV[3] - 1 && arrV[4] = arrV[4] - 1)
-          if(s1 != s2 && s1 != s3 && s1 != s4 && s1 != s5 && s2 != s3 && s2 != s4 && s2 != s5 && s3 != s4 && s3 != s5 && s4 != s5)
-              str = "4" + (char)arrV[4] + "" + tmp;
+      if(arrV[0] == arrV[1] - 1 && arrV[1] == arrV[2] - 1 && arrV[2] == arrV[3] - 1 && arrV[3] == arrV[4] - 1)
+          if(s1 != s2 || s1 != s3 || s1 != s4 || s1 != s5 || s2 != s3 || s2 != s4 || s2 != s5 || s3 != s4 || s3 != s5 || s4 != s5)
+              str = "4" + arrV[4] + "" + tmp;
       return str;
   }
 
-  private static isTris(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String isTris(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       int v1 = getValoreCarta(c1);
       int v2 = getValoreCarta(c2);
@@ -514,15 +584,15 @@ public class ServerDealer {
       Arrays.sort(arrV);
       //Per questo tipo di punteggio non è necessario inserire anche P3 nella stringa di return
       if(arrV[0] == arrV[1] && arrV[0] == arrV[2])
-          str = "3" + (char)arrV[2];
+          str = "3" + arrV[2] + " ";
       else if(arrV[1] == arrV[2] && arrV[1] == arrV[3])
-          str = "3" + (char)arrV[3];
+          str = "3" + arrV[3] + " ";
       else if(arrV[2] == arrV[3] && arrV[2] == arrV[4])
-          str = "3" + (char)arrV[4];
+          str = "3" + arrV[4] + " ";
       return str;
   }
 
-  /*private static isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  /*public static isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String str = "";
       int v1 = getValoreCarta(c1);
       int v2 = getValoreCarta(c2);
@@ -531,7 +601,7 @@ public class ServerDealer {
       int v5 = getValoreCarta(c5);
   }*/
 
-  private static cartaPiuAlta(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+  public static String cartaPiuAlta(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       char s1 = c1.getSeme();
       char s2 = c2.getSeme();
       char s3 = c3.getSeme();
@@ -544,7 +614,7 @@ public class ServerDealer {
       int v5 = getValoreCarta(c5);
       int[] arrV = {v1, v2, v3, v4, v5};
       Arrays.sort(arrV);
-      char tmp = '';
+      char tmp = ' ';
       if(arrV[4] == v1)
           tmp = s1;
       else if(arrV[4] == v2)
@@ -555,10 +625,10 @@ public class ServerDealer {
           tmp = s4;
       else if(arrV[4] == v5)
           tmp = s5;
-      return "0" + (char)arrV[4] + "" + tmp;
+      return "0" + arrV[4] + "" + tmp;
   }
 
-  private static int getValoreCarta(Carta c) {
+  public static int getValoreCarta(Carta c) {
       char v = c.getValore();
       switch(v) {
           case 'A':
@@ -577,7 +647,7 @@ public class ServerDealer {
               return 7;
           case '8':
               return 8;
-          case '10':
+          case 'X':
               return 10;
           case 'J':
               return 11;
@@ -586,5 +656,6 @@ public class ServerDealer {
           case 'K':
               return 13;
       }
+      return 0;
   }
 }
