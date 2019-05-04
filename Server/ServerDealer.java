@@ -1,7 +1,7 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
-//Scala Reale – Scala Colore – Poker – Full – Colore – Scala – Tris – Doppia Coppia – Coppia – Carta Alta 
+//Scala Reale – Scala Colore – Poker – Full – Colore – Scala – Tris – Doppia Coppia – Coppia – Carta Alta
 /*
 Classe ServerDealer per il progetto "poker".
 È il server che si occupa di gestire il mazzo e la partita.
@@ -153,7 +153,7 @@ public class ServerDealer {
       String id = r.substring(1);
       if(idPrimoGiocatore.equals(""))
         idPrimoGiocatore = id;
-      if(id.equals(idPrimoGiocatore)) 
+      if(id.equals(idPrimoGiocatore))
           parolaDone = true;
       if(parolaDone) {  //controllo del valore del piatto col valore della puntataMinima poiché se essi coincidono
           s = "WS";
@@ -358,5 +358,233 @@ public class ServerDealer {
     Record rec = new Record(id);
     log.inserisci(rec);
     return s;
+  }
+
+  /*
+   * Funzione che restituisce una stringa contenente il punteggio delle carte di un giocatore
+   * Parametro: 5 carte di tipo Carta
+   * Valore restituito: una Stringa punteggio del tipo "[P1][P2][P3]"
+   * Note: - P1 è un valore numerico che va da 0 a 8 e identifica il tipo di punteggio massimo ottenibile dalle carte
+           - P2 è un valore numerico che identifica il valore della carta più alta appartenente al tipo di punteggio migliore ottenibile dalle carte
+           - P3 è un carattere che identifica il seme della carta più alta appartenente al tipo di punteggio migliore ottenibile dalle carte
+   * Altre note: Specifica valori P1
+               - 0 -> Carta più alta
+               - 1 -> Coppia (2 carte dello stesso valore)
+               - 2 -> Doppia Coppia (2 carte dello stesso valore + altre 2 carte dello stesso valore)
+               - 3 -> Tris (3 carte dello stesso valore)
+               - 4 -> Scala (5 carte consecutive con semi differenti)
+               - 5 -> Full (3 carte dello stesso valore + 2 carte dello stesso valore)
+               - 6 -> Colore (5 carte con lo stesso seme)
+               - 7 -> Poker (4 carte dello stesso valore)
+               - 8 -> Scala reale (5 carte consecutive dello stesso seme)
+  */
+  private static String ottieniPunteggioCarte(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String punteggio = "";
+      if(!isScalaReale(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isScalaReale(c1, c2, c3, c4, c5);
+      else if(!isPoker(c1, c2, c3, c4, c5).equals(""))
+          punteggio + isPoker(c1, c2, c3, c4, c5);
+      else if(!isColore(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isColore(c1, c2, c3, c4, c5);
+      else if(!isFull(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isFull(c1, c2, c3, c4, c5);
+      else if(!isScala(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isScala(c1, c2, c3, c4, c5);
+      else if(!isTris(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isTris(c1, c2, c3, c4, c5);
+      else if(!isDoppiaCoppia(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isDoppiaCoppia(c1, c2, c3, c4, c5);
+      else if(!isCoppia(c1, c2, c3, c4, c5).equals(""))
+          punteggio = isCoppia(c1, c2, c3, c4, c5);
+      else
+          punteggio = cartaPiuAlta(c1, c2, c3, c4, c5);
+      return punteggio;
+  }
+
+  private static String isScalaReale(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      char s1 = c1.getSeme();
+      char s2 = c2.getSeme();
+      char s3 = c3.getSeme();
+      char s4 = c4.getSeme();
+      char s5 = c5.getSeme();
+      if(s1 == s2 && s1 == s3 && s1 == s4 && s1 == s5) {
+          if(arrV[0] = arrV[1] - 1 && arrV[1] = arrV[2] - 1 && arrV[2] = arrV[3] - 1 && arrV[4] = arrV[4] - 1)
+              str += "8" + (char)arrV[4] + "" + s1;
+      }
+      return str;
+  }
+
+  private static String isPoker(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      if((v1 == v2 && v1 == v3 && v1 == v4) || (v1 == v2 && v1 == v3 && v1 == v5) || (v1 == v2 && v1 == v4 && v1 == v5) || (v1 == v3 && v1 == v4 && v1 == v5))
+          str += "7" + (char)v1 + "" + c1.getSeme();
+      else if(v2 == v3 && v2 == v4 && v2 == v5)
+          str += "7" + (char)v2 + "" + c2.getSeme();
+      return str;
+  }
+
+  private static String isColore(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      char s1 = c1.getSeme();
+      char s2 = c2.getSeme();
+      char s3 = c3.getSeme();
+      char s4 = c4.getSeme();
+      char s5 = c5.getSeme();
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      if(s1 == s2 && s1 == s3 && s1 == s4 && s1 == s5)
+          str = "6" + (char)arrV[4] + "" + s1;
+      return str;
+  }
+
+  private static String isFull(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      //Per questo tipo di punteggio non è necessario inserire anche P3 nella stringa di return
+      if(arrV[0] == arrV[1] && arrV[2] == arrV[3] && arrV[2] == arrV[4])
+          str = "5" + arrV[2];
+      else if(arrV[0] == arrV[1] && arrV[0] == arrV[2] && arrV[3] == arrV[4])
+          str = "5" + (char)arrV[0];
+      return str;
+  }
+
+  private static isScala(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      char s1 = c1.getSeme();
+      char s2 = c2.getSeme();
+      char s3 = c3.getSeme();
+      char s4 = c4.getSeme();
+      char s5 = c5.getSeme();
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      char tmp = '';
+      if(arrV[4] == v1)
+          tmp = s1;
+      else if(arrV[4] == v2)
+          tmp = s2;
+      else if(arrV[4] == v3)
+          tmp = s3;
+      else if(arrV[4] == v4)
+          tmp = s4;
+      else if(arrV[4] == v5)
+          tmp = s5;
+      if(arrV[0] = arrV[1] - 1 && arrV[1] = arrV[2] - 1 && arrV[2] = arrV[3] - 1 && arrV[4] = arrV[4] - 1)
+          if(s1 != s2 && s1 != s3 && s1 != s4 && s1 != s5 && s2 != s3 && s2 != s4 && s2 != s5 && s3 != s4 && s3 != s5 && s4 != s5)
+              str = "4" + (char)arrV[4] + "" + tmp;
+      return str;
+  }
+
+  private static isTris(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      //Per questo tipo di punteggio non è necessario inserire anche P3 nella stringa di return
+      if(arrV[0] == arrV[1] && arrV[0] == arrV[2])
+          str = "3" + (char)arrV[2];
+      else if(arrV[1] == arrV[2] && arrV[1] == arrV[3])
+          str = "3" + (char)arrV[3];
+      else if(arrV[2] == arrV[3] && arrV[2] == arrV[4])
+          str = "3" + (char)arrV[4];
+      return str;
+  }
+
+  /*private static isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      String str = "";
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+  }*/
+
+  private static cartaPiuAlta(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
+      char s1 = c1.getSeme();
+      char s2 = c2.getSeme();
+      char s3 = c3.getSeme();
+      char s4 = c4.getSeme();
+      char s5 = c5.getSeme();
+      int v1 = getValoreCarta(c1);
+      int v2 = getValoreCarta(c2);
+      int v3 = getValoreCarta(c3);
+      int v4 = getValoreCarta(c4);
+      int v5 = getValoreCarta(c5);
+      int[] arrV = {v1, v2, v3, v4, v5};
+      Arrays.sort(arrV);
+      char tmp = '';
+      if(arrV[4] == v1)
+          tmp = s1;
+      else if(arrV[4] == v2)
+          tmp = s2;
+      else if(arrV[4] == v3)
+          tmp = s3;
+      else if(arrV[4] == v4)
+          tmp = s4;
+      else if(arrV[4] == v5)
+          tmp = s5;
+      return "0" + (char)arrV[4] + "" + tmp;
+  }
+
+  private static int getValoreCarta(Carta c) {
+      char v = c.getValore();
+      switch(v) {
+          case 'A':
+              return 1;
+          case '2':
+              return 2;
+          case '3':
+              return 3;
+          case '4':
+              return 4;
+          case '5':
+              return 5;
+          case '6':
+              return 6;
+          case '7':
+              return 7;
+          case '8':
+              return 8;
+          case '10':
+              return 10;
+          case 'J':
+              return 11;
+          case 'Q':
+              return 12;
+          case 'K':
+              return 13;
+      }
   }
 }
