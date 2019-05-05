@@ -89,4 +89,9 @@ public class Giocatore
     }
     
     public String parola() throws Exception {return conn.risposta("W" + id);}
+
+    public String ottieniPunteggio() throws Exception {
+        String str = conn.risposta("F" + carte.elementAt(0) + carte.elementAt(1) + carte.elementAt(2) +carte.elementAt(3) + carte.elementAt(4) + id);
+        return str;
+    }
 }

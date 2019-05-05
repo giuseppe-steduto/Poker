@@ -2,6 +2,8 @@
 comment0.target=Giocatore
 comment1.params=f
 comment1.target=Giocatore(FinestraGioco)
+comment10.params=
+comment10.target=java.lang.String\ ottieniPunteggio()
 comment2.params=
 comment2.target=void\ inizializza()
 comment3.params=
@@ -18,4 +20,4 @@ comment8.params=
 comment8.target=java.lang.String\ richiediPiatto()
 comment9.params=
 comment9.target=java.lang.String\ parola()
-numComments=10
+numComments=11
