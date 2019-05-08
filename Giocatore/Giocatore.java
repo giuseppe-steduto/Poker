@@ -2,7 +2,7 @@ import java.net.*;
 import java.util.Vector;
 public class Giocatore
 {
-    private ConnessioneAPartita conn = new ConnessioneAPartita("192.168.0.174", 2000);
+    private ConnessioneAPartita conn = new ConnessioneAPartita("localhost", 2000);
     private String id = "";
     private String richiesta = "C";
     private String tmp = "";
@@ -48,21 +48,23 @@ public class Giocatore
         }
     }
 
-    public boolean isMioTurno() throws Exception {
+    public int isMioTurno() throws Exception {
         String risp = conn.risposta("T" + id);
-        if(risp.charAt(1) == 'S')
-            return true;
-        return false;
+        if(risp.charAt(1) == 'S') //È il tuo turno
+            return 0;
+        else if(risp.charAt(1) == 'N') //Non è il tuo turno
+            return 1;
+        return 2; //Partita finita
     }
 
-    public void cambiaCarte(String s) throws Exception {
+    public boolean cambiaCarte(String s) throws Exception {
         int n = s.length() / 3; //Numero di carte da sostituire
         String risp = conn.risposta("H" + n + s + "S" + id);
-        if(risp.equals("E")) {
-            f.messaggio("Errore di comunicazione!");
-            return;
-        }
         carte.clear();
+        if(risp.equals("E")) {
+            f.messaggioErr("Non sei riuscito a cambiare carte! Forse non è il momento di cambiare");
+            return false;
+        }
         for(int i = 0; i < risp.length() / 3; i++) {
             tmp = "";
             tmp += risp.charAt((3 * i) + 1);
@@ -70,6 +72,7 @@ public class Giocatore
             carte.add(tmp);
         }
         f.aggiungiCarte(carte);
+        return true;
     }
 
     public void chiudi(String s) throws Exception {
@@ -87,11 +90,13 @@ public class Giocatore
         String risp = conn.risposta("?P");
         return risp.substring(risp.indexOf("P") + 1);
     }
-    
+
     public String parola() throws Exception {return conn.risposta("W" + id);}
 
     public String ottieniPunteggio() throws Exception {
         String str = conn.risposta("F" + carte.elementAt(0) + carte.elementAt(1) + carte.elementAt(2) +carte.elementAt(3) + carte.elementAt(4) + id);
         return str;
     }
+    
+    public String finisci() throws Exception {return conn.risposta("F" + id);}
 }
