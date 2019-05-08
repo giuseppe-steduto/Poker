@@ -180,15 +180,19 @@ public class FinestraGioco extends JFrame implements ActionListener
                 parola();
             } else if (e.getActionCommand().equals("t1")) {
                 try {
-                    if(g.isMioTurno()) {
+                    int rispostaFine = g.isMioTurno();
+                    if(rispostaFine == 0) {
                         cambia.setEnabled(true);
                         punta.setEnabled(true);
                         parola.setEnabled(true);
                     }
-                    else {
+                    else if(rispostaFine == 1) {
                         cambia.setEnabled(false);
                         punta.setEnabled(false);
                         parola.setEnabled(false);
+                    }
+                    else {
+                        terminaPartita();
                     }
                 } catch (Exception exc) {
                     messaggioErr("Non posso stabilire se è il tuo turno o meno, oh, no! :( ");
@@ -226,7 +230,7 @@ public class FinestraGioco extends JFrame implements ActionListener
 
                 //Fai inviare dal server nuove carte
                 try {
-                    g.cambiaCarte(carteVecchie.toUpperCase());
+                    possoEliminare = g.cambiaCarte(carteVecchie.toUpperCase());
                     //Nel metodo è prevista anche l'aggiunta delle nuove carte
                     //alla finestra
                 } catch (Exception exc) {
@@ -294,9 +298,56 @@ public class FinestraGioco extends JFrame implements ActionListener
             piattoValueLabel.setText("" + piatto + "$");
             saldoValueLabel.setText("" + saldo + "$");
         }
-        
+
         public void aggiornaValoriLabelPuntateMinimaEValorePiattoTitoloTopETitoloPotESaldo(int puntata, int piatto) {
             puntataValueLabel.setText("" + pMinima + "$");
             piattoValueLabel.setText("" + piatto + "$");
+        }
+
+        private void terminaPartita() {
+            String s = "";
+            try {
+                java.lang.Thread.sleep(20);
+                s = g.finisci();
+            } catch (Exception e) {
+                messaggioErr("Non sono riuscito a chiudere la partita! :(");
+            } //Non fare niente perchè tanto non succede nulla
+            if(s.equals("E")) {
+                messaggioErr("Errore: ho tentato di calcolare il tuo punteggio prima che finisse la partita!");
+                return;
+            }
+
+            //Altrimenti, se la partita è finita
+
+            //Rimuovi il pannello dei bottoni, ci andrà l'esito della partita
+            BorderLayout layout = (BorderLayout) this.getLayout();
+            this.remove(bottoni);
+            System.out.println(s);
+            if(s.equals("S")) { //Ho vinto!
+                vinci();
+            }
+            else {            //Ho perso :(
+                perdi();
+            }
+        }
+
+        private void vinci() {
+            JPanel vittoria = new JPanel(new FlowLayout());
+            vittoria.setOpaque(true);
+            vittoria.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+            Etichetta haiVinto = new Etichetta("Hai vinto!", font.deriveFont(30));
+            vittoria.add(haiVinto);
+            this.add(vittoria, BorderLayout.SOUTH);
+            SwingUtilities.updateComponentTreeUI(this);
+        }
+
+        private void perdi() {
+            JPanel sconfitta = new JPanel(new FlowLayout());
+            sconfitta.setOpaque(true);
+            sconfitta.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+            Etichetta haiPerso = new Etichetta("Hai perso!", font.deriveFont(30));
+            sconfitta.add(haiPerso);
+            this.add(sconfitta, BorderLayout.SOUTH);
+            SwingUtilities.updateComponentTreeUI(this);
         }
 }
