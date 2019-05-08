@@ -447,24 +447,37 @@ public class ServerDealer {
     false se p1 < p2
   */
   public static boolean confrontaPunteggi(String p1, String p2) throws Exception {
-      String pParte2 = ""; //Il problema è che Leggieri ha restituito il punteggio facendo
-                           //[P1][P2][P3], senza separatori, e P2 potrebbe essere a 2 cifre.
-      pParte2 = "" + p1.charAt(1);
-      if(p1.length() == 4)
+      String pParte2 = "";
+      int punteggio1;
+      if(p1.length() == 4) {
           pParte2 = p1.substring(1, 2);
-      int punteggio1 = Character.getNumericValue(p1.charAt(0)) * 1000 +
-                       Integer.parseInt(pParte2) * 10 +
-                       Character.getNumericValue(p1.charAt(2));
-      pParte2 = "" + p2.charAt(1);
-      if(p2.length() == 4)
+          punteggio1 = Character.getNumericValue(p1.charAt(0)) * 1000 +
+                           Integer.parseInt(pParte2) * 10 +
+                           Character.getNumericValue(p1.charAt(3));
+      }
+      else {
+          pParte2 = "" + p1.charAt(1);
+          punteggio1 = Character.getNumericValue(p1.charAt(0)) * 1000 +
+                           Integer.parseInt(pParte2) * 10 +
+                           Character.getNumericValue(p1.charAt(2));
+      }
+      int punteggio2;
+      if(p2.length() == 4) {
           pParte2 = p2.substring(1, 2);
-      int punteggio2 = Character.getNumericValue(p2.charAt(0)) * 1000 +
-                       Integer.parseInt(pParte2) * 10 +
-                       Character.getNumericValue(p2.charAt(2));
+          punteggio2 = Character.getNumericValue(p2.charAt(0)) * 1000 +
+                           Integer.parseInt(pParte2) * 10 +
+                           Character.getNumericValue(p2.charAt(3));
+      }
+      else {
+          pParte2 = "" + p2.charAt(1);
+          punteggio2 = Character.getNumericValue(p2.charAt(0)) * 1000 +
+                           Integer.parseInt(pParte2) * 10 +
+                           Character.getNumericValue(p2.charAt(2));
+      }
       if(punteggio1 > punteggio2)
-          return true;
-      else
           return false;
+      else
+          return true;
   }
 
   public static String isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
