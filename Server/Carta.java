@@ -5,6 +5,12 @@ public class Carta {
     valore = v;
     seme = s;
   }
+  
+  public Carta(String s) {
+      valore = s.charAt(0);
+      seme = s.charAt(1);
+  }
+  
   public Character getValore() {return valore;}
   public Character getSeme() {return seme;}
   public int getValoreCarta() {
