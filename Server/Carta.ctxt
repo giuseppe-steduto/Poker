@@ -2,10 +2,12 @@
 comment0.target=Carta
 comment1.params=v\ s
 comment1.target=Carta(java.lang.Character,\ java.lang.Character)
-comment2.params=
-comment2.target=java.lang.Character\ getValore()
+comment2.params=s
+comment2.target=Carta(java.lang.String)
 comment3.params=
-comment3.target=java.lang.Character\ getSeme()
+comment3.target=java.lang.Character\ getValore()
 comment4.params=
-comment4.target=int\ getValoreCarta()
-numComments=5
+comment4.target=java.lang.Character\ getSeme()
+comment5.params=
+comment5.target=int\ getValoreCarta()
+numComments=6
