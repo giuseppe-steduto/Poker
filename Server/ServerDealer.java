@@ -93,8 +93,8 @@ public class ServerDealer {
             return "M" + puntataMinima + "P" + piatto;
         case 'P':
             return operazionePuntata(r);
-        case 'F': //calcolo del punteggio
-            //per ora niente
+        case 'F':
+            return hoVinto(r);
         default:
             return "E";
     }
@@ -113,33 +113,25 @@ public class ServerDealer {
    *       -puntatMinima --> assume il valore della puntata in questione se quest'ultima è maggiore alla puntatMinima stessa o se l'ID del giocatore in questione è uguale all'idPrimoGiocatore
   */
   private static String operazionePuntata(String r) {
+        if(numeroGiri == 1) //Se siamo durante il giro di cambio carte, restituisci errore
+            return "E";
         String tmp = "";
         int i = 1; //Variabile che, alla fine, determinerà la posizione della prima cifra dell'ID nella stringa r
         //Il ciclo do-while che va a mettere nella variabile tmp il valore della puntata che il client vuole effettuare
-        do{
+        do {
             tmp += r.charAt(i);
             i ++;
-        }
-        while(r.charAt(i) != 'S');
+        } while(r.charAt(i) != 'S');
         int puntata = Integer.parseInt(tmp);
         String id = r.substring(++i);
         if(puntataMinima == 0)
             idPrimoGiocatore = id;
         if(id.equals(idPrimoGiocatore))
             puntataMinima = puntata;
-            numeroMosse++;
-            if(compareNumeroMosseNumeroGiocatori(numeroMosse, giocatori)) {
-                numeroGiri++;
-                numeroMosse = 0;
-            }
         if(puntata == puntataMinima) {
             piatto += puntata;
-            numeroMosse++;
-            if(compareNumeroMosseNumeroGiocatori(numeroMosse, giocatori)) {
-                numeroGiri++;
-                numeroMosse = 0;
-            }
             avantiTurno(id);
+            aumentaMossa();
             parolaDone = false;
             return "OK";
         }
@@ -148,13 +140,11 @@ public class ServerDealer {
             puntataMinima = puntata;
             piatto += puntata;
             numeroMosse = 0;
-            /*if(compareNumeroMosseNumeroGiocatori(numeroMosse, giocatori)) { 
-                numeroGiri++;
-                numeroMosse = 0;
-            }
+            /*aumentaMossa();
             * per ora lo commento perché teoricamente non dovrebbe mai servire in questo caso
-            */ 
+            */
             avantiTurno(id);
+            aumentaMossa();
             parolaDone = false;
             return "OK";
         }
@@ -175,23 +165,19 @@ public class ServerDealer {
       String id = r.substring(1);
       if(idPrimoGiocatore.equals(""))
         idPrimoGiocatore = id;
-      if(id.equals(idPrimoGiocatore) && numeroGiri >= 1)
-          parolaDone = true;
-          numeroMosse++;
-          if(compareNumeroMosseNumeroGiocatori(numeroMosse, giocatori)) {
-            numeroGiri++;
-            numeroMosse = 0;
-          }
+      if(id.equals(idPrimoGiocatore) && numeroGiri == 2) {
+        parolaDone = true;
+      }
       if(parolaDone) {  //controllo del valore del piatto col valore della puntataMinima poiché se essi coincidono
           s = "WS";
           avantiTurno(id);
+          aumentaMossa();
           return s;
       }
       else {
           s = "WN";
           return s;
       }
-
   }
 
   /*
@@ -226,6 +212,9 @@ public class ServerDealer {
    * Stringa del tipo T[R], dove R = S se è il turno del giocatore con id = [ID], altrimenti R = N
    */
  private static String isMioTurno(String r) {
+      if(isPartitaFinita) {
+          return "TF";
+      }
       String id = r.substring(1);
       Record rec = new Record(id);
       if(!log.contains(rec)) { //Controlla se esiste una sessione con quell'id
@@ -261,12 +250,8 @@ public class ServerDealer {
       for(int i = 0; i < 5; i++) {
           Carta c = new Carta(car.charAt(3 * i + 1), car.charAt(3 * i + 2));
           mazzo.add(c);
-      }
-      numeroMosse++;
-      if(compareNumeroMosseNumeroGiocatori(numeroMosse, giocatori)) {
-        numeroGiri++;
-        numeroMosse = 0;
-      }
+       }
+      aumentaMossa();
       avantiTurno(record.getId());
       log.remove(record);
       giocatori--;
@@ -286,33 +271,30 @@ public class ServerDealer {
       String s = "";
       //Se non è presente nessun record con l'id inviato, restituisco errore
       Record record = new Record(r.substring(r.length() - 6));
-      if(!log.contains(record)) {
+      if(!log.contains(record) || numeroGiri != 1) { //Se id sessione non presente o se non è il momento di cambiare carte
           return "E";
       }
-      if(numeroGiri > 0) {
-        String car = log.get(log.indexOf(record)).getCarte(); //Le vecchie carte del record, da aggiornare
-        //Estrai n carte dal mazzo
-        for(int i = 0; i < r.charAt(1) - 48; i++) {
-            Carta cNuova = mazzo.estraiCarta();
-            Carta cVecchia = new Carta(r.charAt(3 * i + 3), r.charAt(3 * i + 4));
-            String tmp = "" + cNuova.getValore() + cNuova.getSeme();
-            String tmp2 = "" + cVecchia.getValore() + cVecchia.getSeme();
-            s += "C" + tmp;
-            car = car.replace(tmp2, tmp);
-
-        }
-        //Rimetti nel mazzo le carte restituite
-        for(int i = 0; i < r.charAt(1) - 48; i++) {
-            Carta cVecchia = new Carta(r.charAt(3 * i + 3), r.charAt(3 * i + 4));
-            mazzo.add(cVecchia);
-        }
-        record.cambiaCarte(r.charAt(1) - 48);
-        record.setCarte(car);
-        log.aggiorna(record);
-        avantiTurno(record.getId());
-        return s;
-    }
-    return s;
+      String car = log.get(log.indexOf(record)).getCarte(); //Le vecchie carte del record, da aggiornare
+      //Estrai n carte dal mazzo
+      for(int i = 0; i < r.charAt(1) - 48; i++) {
+          Carta cNuova = mazzo.estraiCarta();
+          Carta cVecchia = new Carta(r.charAt(3 * i + 3), r.charAt(3 * i + 4));
+          String tmp = "" + cNuova.getValore() + cNuova.getSeme();
+          String tmp2 = "" + cVecchia.getValore() + cVecchia.getSeme();
+          s += "C" + tmp;
+          car = car.replace(tmp2, tmp);
+      }
+      //Rimetti nel mazzo le carte restituite
+      for(int i = 0; i < r.charAt(1) - 48; i++) {
+          Carta cVecchia = new Carta(r.charAt(3 * i + 3), r.charAt(3 * i + 4));
+          mazzo.add(cVecchia);
+      }
+      record.cambiaCarte(r.charAt(1) - 48);
+      record.setCarte(car);
+      log.aggiorna(record);
+      avantiTurno(record.getId());
+      aumentaMossa();
+      return s;
   }
 
   /*
@@ -350,6 +332,8 @@ public class ServerDealer {
       String id - L'id di chi ha appena finito (CON SUCCESSO) la sua mossa
   */
   private static void avantiTurno(String id) {
+      if(isPartitaFinita)
+            return;
       Record record = new Record(id);
       for(int i = 0; i < log.size(); i++) {
           if(record.equals(log.get(i))) { //Se ho trovato il record con l'id del giocatore che ha fatto la mossa
@@ -414,7 +398,7 @@ public class ServerDealer {
                - 7 -> Poker (4 carte dello stesso valore)
                - 8 -> Scala reale (5 carte consecutive dello stesso seme)
   */
-  public static String ottieniPunteggioCarte(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5, String idGiocatoreCorrente) {
+  public static String ottieniPunteggioCarte(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
       String punteggio = "";
       if(!isScalaReale(c1, c2, c3, c4, c5).equals(""))
           punteggio = isScalaReale(c1, c2, c3, c4, c5);
@@ -435,9 +419,52 @@ public class ServerDealer {
       else
           punteggio = cartaPiuAlta(c1, c2, c3, c4, c5);
       String pFinale = "";  //stringa contenente il punteggio del giocatore più il relativo id
-      pFinale += "P" + punteggio + idGiocatoreCorrente;
-      punteggi.add(pFinale);
+      pFinale += "P" + punteggio;
+      //punteggi.add(pFinale);
       return punteggio;
+  }
+
+  public static String ottieniPunteggioCarte(String c) {
+    //C1qC1qC1qC1qC1q
+    //0123456789ABCDE
+    Carta c1 = new Carta(c.substring(1, 3));
+    Carta c2 = new Carta(c.substring(4, 6));
+    Carta c3 = new Carta(c.substring(7, 9));
+    Carta c4 = new Carta(c.substring(10, 12));
+    Carta c5 = new Carta(c.substring(13));
+    return ottieniPunteggioCarte(c1, c2, c3, c4, c5);
+  }
+
+  /*
+    Questa funzione confronta due stringhe rappresentanti i punteggi di due diversi giocatori.
+
+    Parametri:
+    p1 -> Punteggio ("P...") di un giocatore
+    p2 -> Punteggio ("P...") di un altro giocatore
+
+    Valore restituito:
+    true se p1 > p2
+    false se p1 < p2
+  */
+  public static boolean confrontaPunteggi(String p1, String p2) throws Exception {
+      String pParte2 = ""; //Il problema è che Leggieri ha restituito il punteggio facendo
+                           //[P1][P2][P3], senza separatori, e P2 potrebbe essere a 2 cifre.
+      pParte2 = "" + p1.charAt(1);
+      if(p1.length() == 4)
+          pParte2 = p1.substring(1, 2);
+      int punteggio1 = Character.getNumericValue(p1.charAt(0)) * 1000 +
+                       Integer.parseInt(pParte2) * 10 +
+                       Character.getNumericValue(p1.charAt(2));
+      pParte2 = "" + p2.charAt(1);
+      if(p2.length() == 4)
+          pParte2 = p2.substring(1, 2);
+      int punteggio2 = Character.getNumericValue(p2.charAt(0)) * 1000 +
+                       Integer.parseInt(pParte2) * 10 +
+                       Character.getNumericValue(p2.charAt(2));
+      if(punteggio1 > punteggio2)
+          return true;
+      else
+          return false;
   }
 
   public static String isCoppia(Carta c1, Carta c2, Carta c3, Carta c4, Carta c5) {
@@ -686,6 +713,8 @@ public class ServerDealer {
               return 7;
           case '8':
               return 8;
+          case '9':
+              return 9;
           case 'X':
               return 10;
           case 'J':
@@ -698,9 +727,46 @@ public class ServerDealer {
       return 0;
   }
 
-  private static boolean compareNumeroMosseNumeroGiocatori (int n1, int n2) {
-      if(n1 == n2)
+  private static boolean aumentaMossa() {
+      numeroMosse++;
+      if(numeroMosse == giocatori) {
+        numeroGiri++;
+        if(numeroGiri == 3)
+          terminaPartita();
+        numeroMosse = 0;
         return true;
+      }
       return false;
+  }
+
+  private static void terminaPartita() {
+      for(Record r: log) {
+          r.setTurno(false);
+      }
+      Record max = log.get(0);
+      try {
+        for(Record r: log) {
+          if(confrontaPunteggi(ottieniPunteggioCarte(max.getCarte()), ottieniPunteggioCarte(r.getCarte()))) {
+            max = r;
+          }
+        }
+      } catch (Exception exc) {
+        System.out.println("Errore nel confronto dei punteggi!\n" + exc.getMessage());
+      }
+      idPrimoGiocatore = max.getId();
+      isPartitaFinita = true;
+  }
+
+  /*
+      Funzione che risponde alla richiesta del client di sapere se ha vinto o meno.
+      Parametri:
+      String r - S[ID] - L'id del client richiedente
+  */
+  private static String hoVinto(String r) {
+      if(!isPartitaFinita)
+          return "E";
+      if(idPrimoGiocatore.equals(r.substring(1)))
+        return "S"; //A partita finita, in "idPrimoGiocatore" c'è l'id del vincitore.
+      return "N";
   }
 }
