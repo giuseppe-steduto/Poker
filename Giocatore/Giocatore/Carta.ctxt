@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Carta
+comment1.params=
+comment1.target=Carta()
+comment2.params=
+comment2.target=java.lang.Character\ getValore()
+comment3.params=
+comment3.target=java.lang.Character\ getSeme()
+comment4.params=nomeFile
+comment4.target=Carta(java.lang.String)
+comment5.params=x\ y
+comment5.target=void\ resizeImage(int,\ int)
+comment6.params=e
+comment6.target=void\ actionPerformed(java.awt.event.ActionEvent)
+numComments=7
