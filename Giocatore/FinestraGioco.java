@@ -323,32 +323,42 @@ public class FinestraGioco extends JFrame implements ActionListener
             //Rimuovi il pannello dei bottoni, ci andrà l'esito della partita
             BorderLayout layout = (BorderLayout) this.getLayout();
             this.remove(bottoni);
-            System.out.println(s);
             if(s.equals("S")) { //Ho vinto!
-                vinci();
+                finisci("Hai vinto!", "award.png");
             }
             else {            //Ho perso :(
-                perdi();
+                finisci("Hai perso!", "lose.png");
             }
         }
 
-        private void vinci() {
+        private void finisci(String label, String nomeFileIcona) {
             JPanel vittoria = new JPanel(new FlowLayout());
             vittoria.setOpaque(true);
             vittoria.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
-            Etichetta haiVinto = new Etichetta("Hai vinto!", font.deriveFont(30));
+            Etichetta haiVinto = new Etichetta(label, font.deriveFont(50));
+            //Carico l'immagine della coppa in img
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(new File(nomeFileIcona));
+            } catch(Exception e) {messaggioErr(e.getMessage());}
+            //Questa label serve solo come icona
+            JLabel tmpIcona = new JLabel();
+            tmpIcona.setIcon(new ImageIcon(img));
+            JLabel tmpIcona2 = new JLabel();
+            tmpIcona2.setIcon(new ImageIcon(img));
+            vittoria.add(tmpIcona);
             vittoria.add(haiVinto);
+            vittoria.add(tmpIcona2);
             this.add(vittoria, BorderLayout.SOUTH);
-            SwingUtilities.updateComponentTreeUI(this);
-        }
-
-        private void perdi() {
-            JPanel sconfitta = new JPanel(new FlowLayout());
-            sconfitta.setOpaque(true);
-            sconfitta.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
-            Etichetta haiPerso = new Etichetta("Hai perso!", font.deriveFont(30));
-            sconfitta.add(haiPerso);
-            this.add(sconfitta, BorderLayout.SOUTH);
+            /*
+            //Pannello nel quale andrà inserita l'immagine della coppa, a EAST e WEST
+            JPanel iconeVittoria = new JPanel(new FlowLayout());
+            iconeVittoria.setOpaque(true);
+            iconeVittoria.setBackground(new Color(71, 113, 72)); //Colore "verde tavolo poker"
+            iconeVittoria.add(tmpIcona);
+            //Aggiungo alla finestra e aggiorno tutto
+            this.add(iconeVittoria, BorderLayout.EAST);
+            this.add(iconeVittoria, BorderLayout.WEST);*/            
             SwingUtilities.updateComponentTreeUI(this);
         }
 }
