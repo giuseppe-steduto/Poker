@@ -4,7 +4,7 @@ public class Giocatore
 {
     private ConnessioneAPartita conn = new ConnessioneAPartita("localhost", 2000);
     private String id = "";
-    private String richiesta = "C";
+    private String richiesta;
     private String tmp = "";
     private FinestraGioco f;
     private Vector<String> carte = new Vector<String>();

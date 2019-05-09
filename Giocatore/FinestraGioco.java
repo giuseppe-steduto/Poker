@@ -145,7 +145,7 @@ public class FinestraGioco extends JFrame implements ActionListener
         }
 
         public void messaggio(String s) {
-            JOptionPane.showMessageDialog(this, s, "Errore!",
+            JOptionPane.showMessageDialog(this, s, "Ok!",
                 JOptionPane.INFORMATION_MESSAGE);
         }
 
@@ -174,7 +174,7 @@ public class FinestraGioco extends JFrame implements ActionListener
                 try {
                     punta();
                 } catch (Exception exc) {
-                    messaggioErr("Il dealer ha restituito info sulla puntata minima Leggieri è frocio");
+                    messaggioErr("Il dealer ha restituito info sulla puntata minima");
                 }
             } else if(e.getActionCommand().equals("Parola")) {
                 parola();
@@ -300,6 +300,7 @@ public class FinestraGioco extends JFrame implements ActionListener
         }
 
         public void aggiornaValoriLabelPuntateMinimaEValorePiattoTitoloTopETitoloPotESaldo(int puntata, int piatto) {
+            pMinima = puntata;
             puntataValueLabel.setText("" + pMinima + "$");
             piattoValueLabel.setText("" + piatto + "$");
         }
